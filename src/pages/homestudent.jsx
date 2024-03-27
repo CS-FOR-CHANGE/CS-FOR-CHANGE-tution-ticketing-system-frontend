@@ -9,6 +9,7 @@ import { fetchSubjectsSuccess } from "../redux/subjects/subjectsAction";
 import { fetchTicketsSuccess, fetchAppendTicketsSuccess } from "../redux/ticket/ticketsActions";
 import fetchDataAuth from "../utilities/data/FetchdataAuth";
 import { setUser } from "../redux/user/actions";
+import { BackendLinkWS } from "../utilities/BackendLink";
 
 const HomeStudent = ({ Status }) => {
     const dispatch = useDispatch();
@@ -44,7 +45,7 @@ const HomeStudent = ({ Status }) => {
     useEffect(() => {
         // Assuming your Django app runs on localhost and port 8000
         // Adjust the URL to match your Django server's host and port
-        const ws = new WebSocket("ws://127.0.0.1:8000/ws/tickets/");
+        const ws = new WebSocket(BackendLinkWS + "/ws/tickets/");
 
         ws.onopen = () => {
             console.log("WebSocket Connected");
