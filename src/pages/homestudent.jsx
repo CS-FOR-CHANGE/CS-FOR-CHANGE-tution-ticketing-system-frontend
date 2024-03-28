@@ -6,10 +6,9 @@ import QueueStudents from "../components/HomeComponents/Queues/QueueStudents";
 import Typography from "@mui/material/Typography";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSubjectsSuccess } from "../redux/subjects/subjectsAction";
-import { fetchTicketsSuccess, fetchAppendTicketsSuccess } from "../redux/ticket/ticketsActions";
+import { fetchTicketsSuccess } from "../redux/ticket/ticketsActions";
 import fetchDataAuth from "../utilities/data/FetchdataAuth";
 import { setUser } from "../redux/user/actions";
-import { BackendLinkWS } from "../utilities/BackendLink";
 
 const HomeStudent = ({ Status }) => {
     const dispatch = useDispatch();
@@ -39,37 +38,6 @@ const HomeStudent = ({ Status }) => {
         fetchDataAuth("/api/users/user/").then((data) => {
             dispatch(setUser(data));
         });
-    }, []);
-
-    //Connect with tutor update websocket
-    useEffect(() => {
-        // Assuming your Django app runs on localhost and port 8000
-        // Adjust the URL to match your Django server's host and port
-        const ws = new WebSocket(BackendLinkWS + "/ws/tickets/");
-
-        ws.onopen = () => {
-            console.log("WebSocket Connected");
-        };
-
-        ws.onmessage = (e) => {
-            const message = JSON.parse(e.data);
-            const message_json = JSON.parse(message.message)
-
-            dispatch(fetchAppendTicketsSuccess(message_json));
-        };
-
-        ws.onerror = (error) => {
-            console.error("WebSocket Error:", error);
-        };
-
-        ws.onclose = () => {
-            console.log("WebSocket Disconnected");
-        };
-
-        // Cleanup function to close the WebSocket connection when the component unmounts
-        return () => {
-            ws.close();
-        };
     }, []);
 
     return (

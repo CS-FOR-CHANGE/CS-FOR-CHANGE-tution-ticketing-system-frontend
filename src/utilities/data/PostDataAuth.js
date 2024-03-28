@@ -42,7 +42,6 @@ const postDataAuth = async function postData(url, dataToSend) {
         return { success: true, data: data };
     } catch (error) {
         console.error("Could not post the data: ", error);
-        // Return or throw the error message instead of the full error object
         return { success: false, error: error.message };
     }
 };

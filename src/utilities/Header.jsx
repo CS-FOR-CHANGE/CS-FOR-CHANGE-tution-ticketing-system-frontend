@@ -11,13 +11,43 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import { BG_COLOR_SECONDATY } from "./Colors";
+import { useSelector } from "react-redux";
+import { BackendLink } from "./BackendLink";
+import postDataAuth from "./data/PostDataAuth";
+import { retrieveTokens } from "./tokens/getToken";
+import { deleteToken } from "./tokens/deleteToken";
+import { Link } from "react-router-dom";
 
-const pages = ["Some", "Links", "Here"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = [
+    { name: "Student", link: "/student" },
+    { name: "Tutor", link: "/tutor" },
+    { name: "Edmonds College", link: "https://www.edmonds.edu/" },
+];
+const settings = [
+    {
+        name: "Profile",
+        actionHandler: () => {},
+    },
+    {
+        name: "Logout",
+        actionHandler: async () => {
+            const token = await retrieveTokens();
+
+            const data = {
+                accessToken: token.accessToken,
+                refresh_token: token.refreshToken,
+            };
+
+            postDataAuth("/api/users/user/logout/", data).then((data) => {
+                deleteToken();
+            });
+        },
+    },
+];
 
 function ResponsiveAppBar() {
+    const User = useSelector((state) => state.User.user);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -40,9 +70,20 @@ function ResponsiveAppBar() {
         <AppBar position="static" sx={{ bgcolor: BG_COLOR_SECONDATY }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <AdbIcon
-                        sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
-                    />
+                    <Box
+                        className="hideOnSmallScreens"
+                        sx={{
+                            width: "60px",
+                            height: "60px",
+                            borderRadius: "100px",
+                            paddingRight: "5px",
+                        }}
+                    >
+                        <img
+                            src="/Images/Logos/Edmonds college logo.jpg"
+                            alt="Edmonds college logo"
+                        />
+                    </Box>
                     <Typography
                         variant="h6"
                         noWrap
@@ -51,14 +92,12 @@ function ResponsiveAppBar() {
                         sx={{
                             mr: 2,
                             display: { xs: "none", md: "flex" },
-                            fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
                             color: "inherit",
                             textDecoration: "none",
                         }}
                     >
-                        LOGO
+                        Edmonds College
                     </Typography>
 
                     <Box
@@ -97,21 +136,38 @@ function ResponsiveAppBar() {
                         >
                             {pages.map((page) => (
                                 <MenuItem
-                                    key={page}
+                                    key={page.name}
                                     onClick={handleCloseNavMenu}
                                 >
-                                    <Typography textAlign="center">
-                                        {page}
-                                    </Typography>
+                                    <Link to={page.link}>
+                                        <Typography textAlign="center">
+                                            {page.name}
+                                        </Typography>
+                                    </Link>
                                 </MenuItem>
                             ))}
                         </Menu>
                     </Box>
-                    <AdbIcon
-                        sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-                    />
+                    <Box
+                        sx={{
+                            width: "60px",
+                            height: "60px",
+                            borderRadius: "100px",
+                            paddingRight: "5px",
+                            // Use object syntax for responsive styles
+                            display: {
+                                xs: "block", // Visible on xs sizes
+                                md: "none", // Hide starting from md sizes (900px and above)
+                            },
+                        }}
+                    >
+                        <img
+                            src="/Images/Logos/Edmonds college logo.jpg"
+                            alt="Edmonds college logo"
+                        />
+                    </Box>
                     <Typography
-                        variant="h5"
+                        variant="h6"
                         noWrap
                         component="a"
                         href="/"
@@ -119,14 +175,12 @@ function ResponsiveAppBar() {
                             mr: 2,
                             display: { xs: "flex", md: "none" },
                             flexGrow: 1,
-                            fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
                             color: "inherit",
                             textDecoration: "none",
                         }}
                     >
-                        LOGO
+                        Edmonds College
                     </Typography>
                     <Box
                         sx={{
@@ -135,13 +189,18 @@ function ResponsiveAppBar() {
                         }}
                     >
                         {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: "white", display: "block" }}
-                            >
-                                {page}
-                            </Button>
+                            <Link key={page.name} to={page.link}>
+                                <Button
+                                    onClick={handleCloseNavMenu}
+                                    sx={{
+                                        my: 2,
+                                        color: "white",
+                                        display: "block",
+                                    }}
+                                >
+                                    {page.name}
+                                </Button>
+                            </Link>
                         ))}
                     </Box>
 
@@ -151,10 +210,14 @@ function ResponsiveAppBar() {
                                 onClick={handleOpenUserMenu}
                                 sx={{ p: 0 }}
                             >
-                                <Avatar
-                                    alt="Remy Sharp"
-                                    src="/static/images/avatar/2.jpg"
-                                />
+                                {User ? (
+                                    <Avatar
+                                        alt={User.name}
+                                        src={BackendLink + User.photo}
+                                    />
+                                ) : (
+                                    <Box></Box>
+                                )}
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -173,16 +236,33 @@ function ResponsiveAppBar() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem
-                                    key={setting}
-                                    onClick={handleCloseUserMenu}
-                                >
-                                    <Typography textAlign="center">
-                                        {setting}
+                            <Box sx={{ padding: "10px 20px" }}>
+                                {User ? (
+                                    <Typography
+                                        textAlign="center"
+                                        fontWeight={700}
+                                        fontSize="17px"
+                                    >
+                                        {User.name}
                                     </Typography>
-                                </MenuItem>
-                            ))}
+                                ) : (
+                                    <Box></Box>
+                                )}
+                                <Box sx={{ borderBottom: 1, mb: "10px" }}></Box>
+                                {settings.map((setting) => (
+                                    <MenuItem
+                                        key={setting.name}
+                                        onClick={() => {
+                                            handleCloseUserMenu();
+                                            setting.actionHandler();
+                                        }}
+                                    >
+                                        <Typography textAlign="center">
+                                            {setting.name}
+                                        </Typography>
+                                    </MenuItem>
+                                ))}
+                            </Box>
                         </Menu>
                     </Box>
                 </Toolbar>

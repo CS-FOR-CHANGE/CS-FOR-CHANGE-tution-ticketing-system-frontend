@@ -7,6 +7,8 @@ export const deleteToken = () => {
             localStorage.removeItem('organization');
             localStorage.removeItem('user_role');
 
+            window.location.replace("/");
+
             // Resolve the Promise indicating successful token deletion
             resolve();
         } catch (error) {

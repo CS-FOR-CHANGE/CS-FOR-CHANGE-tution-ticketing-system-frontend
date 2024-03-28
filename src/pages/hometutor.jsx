@@ -8,6 +8,7 @@ import { fetchSubjectsSuccess } from "../redux/subjects/subjectsAction";
 import { fetchTicketsSuccess } from "../redux/ticket/ticketsActions";
 import fetchDataAuth from "../utilities/data/FetchdataAuth";
 import { retrieveTokens } from "../utilities/tokens/getToken";
+import { setUser } from "../redux/user/actions";
 
 const Hometutor = ({ Status }) => {
     const dispatch = useDispatch();
@@ -38,6 +39,11 @@ const Hometutor = ({ Status }) => {
         // Get all the tickets
         fetchDataAuth("/api/ticketing/tickets/").then((data) => {
             dispatch(fetchTicketsSuccess(data));
+        });
+
+        // Get the user data
+        fetchDataAuth("/api/users/user/").then((data) => {
+            dispatch(setUser(data));
         });
     }, []);
 

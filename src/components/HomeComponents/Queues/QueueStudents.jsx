@@ -11,6 +11,8 @@ import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
+import { useSelector } from "react-redux";
+import fetchDataAuth from "../../../utilities/data/FetchdataAuth";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -32,7 +34,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
+const leaveQueue = (ticketID) => {
+    fetchDataAuth(`/api/ticketing/tickets/${ticketID}/delete/`, "DELETE").then(
+        (data) => {}
+    );
+};
+
 export default function QueueStudents({ Status, Tickets }) {
+    const User = useSelector((state) => state.User.user);
     // Initialize with 10 minutes and 0 seconds
     const [timeLeft, setTimeLeft] = React.useState({
         minutes: 10,
@@ -45,6 +54,27 @@ export default function QueueStudents({ Status, Tickets }) {
             .toString()
             .padStart(2, "0")} minute(s)`;
     };
+
+    //Filter out which tutor is queued for
+    let tutorIdsForLoggedInStudent = new Set();
+
+    if (User) {
+        // Only proceed to collect tutor IDs if User is not null
+        tutorIdsForLoggedInStudent = Tickets.reduce((acc, ticket) => {
+            if (ticket.student.id === User.id) {
+                acc.add(ticket.tutor.id);
+            }
+            return acc;
+        }, new Set());
+    }
+
+    // Proceed to filter tickets only if we have any tutor IDs identified
+    // If User is null, this will effectively skip filtering based on tutors
+    const filteredTickets = User
+        ? Tickets.filter((ticket) =>
+              tutorIdsForLoggedInStudent.has(ticket.tutor.id)
+          )
+        : [];
 
     return (
         <Box className="Queues">
@@ -67,10 +97,11 @@ export default function QueueStudents({ Status, Tickets }) {
                             <StyledTableCell align="left">
                                 Session Time
                             </StyledTableCell>
+                            <StyledTableCell align="left"></StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Tickets.map((ticket) => (
+                        {filteredTickets.map((ticket) => (
                             <StyledTableRow key={ticket.id}>
                                 <StyledTableCell component="th" scope="row">
                                     {ticket.student.name}
@@ -81,6 +112,21 @@ export default function QueueStudents({ Status, Tickets }) {
                                 <StyledTableCell align="left">
                                     {ticket.session_time} minutes
                                 </StyledTableCell>
+                                {User && User.id === ticket.student.id ? (
+                                    <StyledTableCell align="left">
+                                        <IconButton
+                                            color="secondary"
+                                            aria-label="remove from queue"
+                                            onClick={() => {
+                                                leaveQueue(ticket.id);
+                                            }}
+                                        >
+                                            <PersonRemoveAlt1Icon />
+                                        </IconButton>
+                                    </StyledTableCell>
+                                ) : (
+                                    <StyledTableCell></StyledTableCell>
+                                )}
                             </StyledTableRow>
                         ))}
                     </TableBody>

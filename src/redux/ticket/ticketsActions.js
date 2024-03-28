@@ -5,6 +5,7 @@ import {
     FETCH_TICKETS_FAILURE,
     FETCH_APPEND_TICKETS_SUCCESS,
     SET_TICKETS,
+    DELETE_TICKET_SUCCESS,
 } from "./ticketsTypes";
 
 export const fetchTicketsRequest = () => ({
@@ -30,3 +31,10 @@ export const setTickets = (tickets) => ({
     type: SET_TICKETS,
     payload: tickets,
 });
+
+export const deleteTicketSuccess = (ticketId) => {
+    return {
+        type: DELETE_TICKET_SUCCESS,
+        payload: ticketId,
+    };
+};

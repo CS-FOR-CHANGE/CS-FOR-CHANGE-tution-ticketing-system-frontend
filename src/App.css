@@ -13,6 +13,18 @@
     }
 }
 
+@media (max-width: 899px) {
+    .hideOnSmallScreens {
+        display: none;
+    }
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .App-header {
     background-color: #282c34;
     min-height: 100vh;
@@ -32,6 +44,7 @@
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }

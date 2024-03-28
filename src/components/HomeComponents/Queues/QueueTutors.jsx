@@ -14,6 +14,8 @@ import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 import TextField from "@mui/material/TextField";
 import SubjectSelect from "./SubjectsSelect";
 import Button from "@mui/material/Button";
+import { useSelector } from "react-redux";
+import fetchDataAuth from "../../../utilities/data/FetchdataAuth";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -36,6 +38,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function QueueTutors({ Status, Tickets, Subjects }) {
+    const User = useSelector((state) => state.User.user);
+
+    // Filter tickets to include only those that have the logged-in user (tutor) as their tutor
+    const filteredTickets = User
+        ? Tickets.filter((ticket) => ticket.tutor.id === User.id)
+        : [];
     // Initialize with 10 minutes and 0 seconds
     const [timeLeft, setTimeLeft] = React.useState({
         minutes: 10,
@@ -92,7 +100,7 @@ export default function QueueTutors({ Status, Tickets, Subjects }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Tickets.map((ticket) => (
+                        {filteredTickets.map((ticket) => (
                             <StyledTableRow key={ticket.id}>
                                 <StyledTableCell component="th" scope="row">
                                     {ticket.student.name}

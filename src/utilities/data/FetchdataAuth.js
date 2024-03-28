@@ -2,7 +2,7 @@ import { BackendLink } from "../BackendLink";
 import { retrieveTokens } from "../tokens/getToken";
 import { deleteToken } from "../tokens/deleteToken";
 
-export default function fetchDataAuth(URL) {
+export default function fetchDataAuth(URL, Method="GET") {
     // Ensure the outermost layer returns a Promise
     return retrieveTokens()
         .then((tokens) => {
@@ -19,7 +19,7 @@ export default function fetchDataAuth(URL) {
             });
 
             const requestOptions = {
-                method: "GET",
+                method: Method,
                 headers: myHeaders,
                 redirect: "follow",
             };
