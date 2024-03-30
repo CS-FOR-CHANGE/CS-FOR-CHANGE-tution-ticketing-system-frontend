@@ -1,6 +1,5 @@
 import { BackendLink } from "../BackendLink";
 import { retrieveTokens } from "../tokens/getToken";
-import { deleteToken } from "../tokens/deleteToken";
 
 function sanitizeData(data) {
     const sanitizedData = {};

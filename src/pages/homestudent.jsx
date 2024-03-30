@@ -9,6 +9,7 @@ import { fetchSubjectsSuccess } from "../redux/subjects/subjectsAction";
 import { fetchTicketsSuccess } from "../redux/ticket/ticketsActions";
 import fetchDataAuth from "../utilities/data/FetchdataAuth";
 import { setUser } from "../redux/user/actions";
+import { retrieveTokens } from "../utilities/tokens/getToken";
 
 const HomeStudent = ({ Status }) => {
     const dispatch = useDispatch();
@@ -24,6 +25,13 @@ const HomeStudent = ({ Status }) => {
     } = useSelector((state) => state.Tickets);
 
     useEffect(() => {
+        // Redirect if a student tryes to access this page
+        retrieveTokens().then((tokens) => {
+            if (tokens.user_role !== "student") {
+                window.location.replace("/");
+            }
+        });
+
         // Get the subjects and the tutors associates with the subject
         fetchDataAuth("/api/ticketing/subjects/").then((data) => {
             dispatch(fetchSubjectsSuccess(data));

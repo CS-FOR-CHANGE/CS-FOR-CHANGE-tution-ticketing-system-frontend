@@ -31,7 +31,7 @@ const CommonForm = ({
         "password",
         "confirm_password",
     ];
-    const requiredFieldsForSignin = ["email", "password"];
+    const requiredFieldsForSignin = ["email", "password", "organization"];
 
     useEffect(() => {
         fetchData("/api/ticketing/organizations/").then((data) => {
@@ -170,16 +170,17 @@ const CommonForm = ({
                             name="row-radio-buttons-group"
                             onChange={handleOrganizationChange}
                         >
-                            {Organizations && Organizations.map((oranization, index) => {
-                                return (
-                                    <FormControlLabel
-                                        key={index}
-                                        value={oranization.name}
-                                        control={<Radio />}
-                                        label={oranization.name}
-                                    />
-                                );
-                            })}
+                            {Organizations &&
+                                Organizations.map((oranization, index) => {
+                                    return (
+                                        <FormControlLabel
+                                            key={index}
+                                            value={oranization.name}
+                                            control={<Radio />}
+                                            label={oranization.name}
+                                        />
+                                    );
+                                })}
                         </RadioGroup>
                     </FormControl>
                 ) : (
@@ -204,7 +205,9 @@ const CommonForm = ({
                                   )
                         }
                     >
-                        {Page === "signin" || Page ==="tutor" ? "Sign In" : "Sign Up"}
+                        {Page === "signin" || Page === "tutor"
+                            ? "Sign In"
+                            : "Sign Up"}
                     </Button>
                 ) : (
                     <LoadingButton

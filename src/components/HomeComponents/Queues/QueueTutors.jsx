@@ -37,6 +37,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
+
+const leaveQueue = (ticketID) => {
+    fetchDataAuth(`/api/ticketing/tickets/${ticketID}/delete/`, "DELETE").then(
+        (data) => {}
+    );
+};
+
 export default function QueueTutors({ Status, Tickets, Subjects }) {
     const User = useSelector((state) => state.User.user);
 
@@ -115,6 +122,9 @@ export default function QueueTutors({ Status, Tickets, Subjects }) {
                                     <IconButton
                                         color="secondary"
                                         aria-label="add an alarm"
+                                        onClick={() => {
+                                            leaveQueue(ticket.id);
+                                        }}
                                     >
                                         <PersonRemoveAlt1Icon />
                                     </IconButton>

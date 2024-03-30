@@ -4,11 +4,14 @@ import CommonForm from "../components/SignComponents/CommonForm";
 import { BG_COLOR_THIRD } from "../utilities/Colors";
 import postData from "../utilities/data/PostData";
 import { useNavigate } from "react-router-dom";
+import Alert from "@mui/material/Alert";
 import { storeTokens } from "../utilities/tokens/setToken";
 
 const StudentSignin = () => {
     const navigate = useNavigate();
     const [isLoading, setisLoading] = React.useState(false);
+    const [EmailExistsError, setEmailExistsError] = React.useState(false);
+    const [OtherError, setOtherError] = React.useState(false);
     const [userCredential, setUserCredential] = React.useState({
         email: "",
         password: "",
@@ -16,15 +19,22 @@ const StudentSignin = () => {
     });
 
     const signInClipHandler = () => {
+        setEmailExistsError(false);
+        setOtherError(false);
         setisLoading(true);
+
         postData("/api/users/token/student/", userCredential).then((data) => {
-            if (data) {
-                storeTokens(data).then(() => {
+            if (data.success) {
+                storeTokens(data.data).then(() => {
                     navigate("/student");
                 });
                 setisLoading(false);
+            } else if (data.status === 401) {
+                setEmailExistsError(true);
+                setisLoading(false);
             } else {
                 setisLoading(false);
+                setOtherError(true);
             }
         });
     };
@@ -38,13 +48,41 @@ const StudentSignin = () => {
                 backgroundColor: BG_COLOR_THIRD,
             }}
         >
-            <CommonForm
-                isLoading={isLoading}
-                Page="signin"
-                clickHandler={signInClipHandler}
-                userCredential={userCredential}
-                setUserCredential={setUserCredential}
-            />
+            <div style={{ width: "100%" }}>
+                <CommonForm
+                    isLoading={isLoading}
+                    Page="signin"
+                    clickHandler={signInClipHandler}
+                    userCredential={userCredential}
+                    setUserCredential={setUserCredential}
+                />
+
+                <Box
+                    sx={{
+                        width: ["100%", "70%", "500px", "500px"],
+                        display: "block",
+                        margin: "0 auto",
+                        borderRadius: "5px",
+                        paddingBottom: "30px",
+                    }}
+                >
+                    {EmailExistsError ? (
+                        <Alert sx={{ marginTop: "10px" }} severity="error">
+                            No active account found with the given credentials!
+                        </Alert>
+                    ) : (
+                        <div></div>
+                    )}
+
+                    {OtherError ? (
+                        <Alert sx={{ marginTop: "10px" }} severity="error">
+                            No active account found with the given Email!
+                        </Alert>
+                    ) : (
+                        <div></div>
+                    )}
+                </Box>
+            </div>
         </Box>
     );
 };
