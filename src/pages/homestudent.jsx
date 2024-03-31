@@ -33,8 +33,14 @@ const HomeStudent = ({ Status }) => {
         });
 
         // Get the subjects and the tutors associates with the subject
-        fetchDataAuth("/api/ticketing/subjects/").then((data) => {
-            dispatch(fetchSubjectsSuccess(data));
+        fetchDataAuth("/api/ticketing/subjects/").then(async (subjects) => {
+            const token = await retrieveTokens();
+            const organization = token.organization;
+            console.log(organization);
+            const filtered_subjects = subjects.filter(
+                (subject) => subject.organization.name === organization
+            );
+            dispatch(fetchSubjectsSuccess(filtered_subjects));
         });
 
         // Get all the tickets
@@ -47,6 +53,8 @@ const HomeStudent = ({ Status }) => {
             dispatch(setUser(data));
         });
     }, []);
+
+    console.log(subjects);
 
     return (
         <Box className="Home-page">
