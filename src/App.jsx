@@ -3,7 +3,13 @@ import { useEffect } from "react";
 import { BackendLinkWS } from "./utilities/BackendLink";
 import { useDispatch } from "react-redux";
 import { Routes, Route } from "react-router-dom";
-import { fetchAppendTicketsSuccess, deleteTicketSuccess } from "./redux/ticket/ticketsActions";
+import {
+    fetchAppendTicketsSuccess,
+    deleteTicketSuccess,
+} from "./redux/ticket/ticketsActions";
+import fetchDataAuth from "./utilities/data/FetchdataAuth";
+import { retrieveTokens } from "./utilities/tokens/getToken";
+import { fetchSubjectsSuccess } from "./redux/subjects/subjectsAction";
 // Component import
 import ResponsiveAppBar from "./utilities/Header";
 
@@ -17,6 +23,18 @@ import Hometutor from "./pages/hometutor";
 
 function App() {
     const dispatch = useDispatch();
+
+    const fetchSubjects = () => {
+        fetchDataAuth("/api/ticketing/subjects/").then(async (subjects) => {
+            const token = await retrieveTokens();
+            const organization = token.organization;
+            const filtered_subjects = subjects.filter(
+                (subject) => subject.organization.name === organization
+            );
+            dispatch(fetchSubjectsSuccess(filtered_subjects));
+        });
+    };
+
     //Connect with tutor update websocket
     useEffect(() => {
         // Assuming your Django app runs on localhost and port 8000
@@ -33,8 +51,15 @@ function App() {
 
             if (action === "added") {
                 dispatch(fetchAppendTicketsSuccess(ticket_json));
+
+                // Get the subjects and the tutors associates with the subject
+                fetchSubjects();
             } else if (action === "deleted") {
-                dispatch(deleteTicketSuccess(ticket_json.id));            }
+                dispatch(deleteTicketSuccess(ticket_json.id));
+
+                // Get the subjects and the tutors associates with the subject
+                fetchSubjects();
+            }
         };
 
         ws.onerror = (error) => {

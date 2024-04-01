@@ -18,38 +18,43 @@ import postDataAuth from "./data/PostDataAuth";
 import { retrieveTokens } from "./tokens/getToken";
 import { deleteToken } from "./tokens/deleteToken";
 import { Link } from "react-router-dom";
+import ProfileModal from "../components/Header/ProfileModal";
 
 const pages = [
     { name: "Student", link: "/student" },
     { name: "Tutor", link: "/tutor" },
     { name: "Edmonds College", link: "https://www.edmonds.edu/" },
 ];
-const settings = [
-    {
-        name: "Profile",
-        actionHandler: () => {},
-    },
-    {
-        name: "Logout",
-        actionHandler: async () => {
-            const token = await retrieveTokens();
-
-            const data = {
-                accessToken: token.accessToken,
-                refresh_token: token.refreshToken,
-            };
-
-            postDataAuth("/api/users/user/logout/", data).then((data) => {
-                deleteToken();
-            });
-        },
-    },
-];
 
 function ResponsiveAppBar() {
+    const [OpenProfileModal, setOpenProfileModal] = React.useState(false);
     const User = useSelector((state) => state.User.user);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+    const settings = [
+        {
+            name: "Profile",
+            actionHandler: () => {
+                setOpenProfileModal(true);
+            },
+        },
+        {
+            name: "Logout",
+            actionHandler: async () => {
+                const token = await retrieveTokens();
+
+                const data = {
+                    accessToken: token.accessToken,
+                    refresh_token: token.refreshToken,
+                };
+
+                postDataAuth("/api/users/user/logout/", data).then((data) => {
+                    deleteToken();
+                });
+            },
+        },
+    ];
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -69,6 +74,11 @@ function ResponsiveAppBar() {
     return (
         <AppBar position="static" sx={{ bgcolor: BG_COLOR_SECONDATY }}>
             <Container maxWidth="xl">
+                <ProfileModal
+                    Open={OpenProfileModal}
+                    setOpen={setOpenProfileModal}
+                />
+
                 <Toolbar disableGutters>
                     <Box
                         className="hideOnSmallScreens"

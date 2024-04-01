@@ -13,6 +13,8 @@ import IconButton from "@mui/material/IconButton";
 import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 import { useSelector } from "react-redux";
 import fetchDataAuth from "../../../utilities/data/FetchdataAuth";
+import CountdownTimer from "./CountdownTimer";
+import UserTurnCountdown from "./UserTurnCountdown";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -42,18 +44,6 @@ const leaveQueue = (ticketID) => {
 
 export default function QueueStudents({ Status, Tickets }) {
     const User = useSelector((state) => state.User.user);
-    // Initialize with 10 minutes and 0 seconds
-    const [timeLeft, setTimeLeft] = React.useState({
-        minutes: 10,
-        seconds: 0,
-    });
-
-    // Format timeLeft to include leading zeros
-    const formatTimeLeft = (time) => {
-        return `${time.minutes}:${time.seconds
-            .toString()
-            .padStart(2, "0")} minute(s)`;
-    };
 
     //Filter out which tutor is queued for
     let tutorIdsForLoggedInStudent = new Set();
@@ -78,12 +68,9 @@ export default function QueueStudents({ Status, Tickets }) {
 
     return (
         <Box className="Queues">
-            <Typography variant="h5" gutterBottom textAlign="left" mb="15px">
-                Estimated wait time:{" "}
-                {timeLeft.minutes === 0 && timeLeft.seconds === 0
-                    ? "Countdown finished"
-                    : formatTimeLeft(timeLeft)}
-            </Typography>
+            {/* <Typography variant="h5" gutterBottom textAlign="left" mb="15px">
+                <UserTurnCountdown sessions={Tickets} userId={User.id} />
+            </Typography> */}
 
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: "100%" }} aria-label="customized table">
@@ -94,9 +81,9 @@ export default function QueueStudents({ Status, Tickets }) {
                                 Tutor
                             </StyledTableCell>
 
-                            <StyledTableCell align="left">
+                            {/* <StyledTableCell align="left">
                                 Session Time
-                            </StyledTableCell>
+                            </StyledTableCell> */}
                             <StyledTableCell align="left"></StyledTableCell>
                         </TableRow>
                     </TableHead>
@@ -109,9 +96,12 @@ export default function QueueStudents({ Status, Tickets }) {
                                 <StyledTableCell align="left">
                                     {ticket.tutor.name} ({ticket.subject.title})
                                 </StyledTableCell>
-                                <StyledTableCell align="left">
-                                    {ticket.session_time} minutes
-                                </StyledTableCell>
+                                {/* <StyledTableCell align="left">
+                                    <CountdownTimer
+                                        startTime={ticket.start_time}
+                                        endTime={ticket.end_time}
+                                    />
+                                </StyledTableCell> */}
                                 {User && User.id === ticket.student.id ? (
                                     <StyledTableCell align="left">
                                         <IconButton

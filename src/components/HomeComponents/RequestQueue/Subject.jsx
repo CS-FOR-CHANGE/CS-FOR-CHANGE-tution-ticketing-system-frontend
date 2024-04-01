@@ -88,7 +88,6 @@ export default function Subject({
             student: User.id,
             tutor: selectedTutor,
             subject: SubjectID,
-            session_time: "00:10:00",
             ticketing_code: Code,
         };
 
