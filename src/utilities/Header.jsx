@@ -27,8 +27,8 @@ const pages = [
 ];
 
 function ResponsiveAppBar() {
-    const [OpenProfileModal, setOpenProfileModal] = React.useState(false);
     const User = useSelector((state) => state.User.user);
+    const [OpenProfileModal, setOpenProfileModal] = React.useState(false);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -77,6 +77,7 @@ function ResponsiveAppBar() {
                 <ProfileModal
                     Open={OpenProfileModal}
                     setOpen={setOpenProfileModal}
+                    User={User}
                 />
 
                 <Toolbar disableGutters>

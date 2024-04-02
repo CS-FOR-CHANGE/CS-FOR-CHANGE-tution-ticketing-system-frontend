@@ -71,7 +71,9 @@ const CommonForm = ({
                         <LockIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        {Page === "signin" ? "Sign In" : "Sign Up"}
+                        {Page === "signin" || Page === "tutor"
+                            ? "Sign In"
+                            : "Sign Up"}
                     </Typography>
                 </Box>
                 {Page === "signup" ? (
