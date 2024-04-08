@@ -11,7 +11,7 @@ const fetchData = async function fetchData(url) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error("Could not fetch the data: ", error);
+        //something
     }
 };
 

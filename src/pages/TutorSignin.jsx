@@ -15,6 +15,7 @@ const TutorSignin = () => {
     const [userCredential, setUserCredential] = React.useState({
         email: "",
         password: "",
+        organization: "",
     });
 
     const signInClipHandler = () => {

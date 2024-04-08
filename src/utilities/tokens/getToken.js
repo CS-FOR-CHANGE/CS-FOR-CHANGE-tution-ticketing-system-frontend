@@ -40,7 +40,6 @@ export async function retrieveTokens() {
             user_role: decryptedUserRole,
         };
     } catch (error) {
-        console.error("Error retrieving tokens:", error);
         // Return undefined or null for tokens to indicate failure
         return {
             accessToken: null,

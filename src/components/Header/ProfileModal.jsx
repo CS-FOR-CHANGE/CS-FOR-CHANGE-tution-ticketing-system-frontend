@@ -138,7 +138,6 @@ export default function ProfileModal({ Open, setOpen, User }) {
                 window.location.reload();
             }
         } catch (error) {
-            console.error("Error:", error);
             // Handle errors not related to the response here (e.g., network errors)
         }
     };

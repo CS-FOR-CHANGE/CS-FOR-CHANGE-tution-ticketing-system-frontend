@@ -63,7 +63,7 @@ function App() {
         };
 
         ws.onerror = (error) => {
-            console.error("WebSocket Error:", error);
+            //Error
         };
 
         ws.onclose = () => {};

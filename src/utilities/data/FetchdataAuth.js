@@ -38,7 +38,6 @@ export default function fetchDataAuth(URL, Method="GET") {
             );
         })
         .catch((error) => {
-            console.error("Fetch error:", error);
             throw error; // Ensure that any error is propagated
         });
 }

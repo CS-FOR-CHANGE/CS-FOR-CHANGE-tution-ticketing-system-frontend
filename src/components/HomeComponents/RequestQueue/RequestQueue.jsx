@@ -12,15 +12,17 @@ const RequestQueue = ({ Subjects }) => {
 
             {Subjects ? (
                 Subjects.map((subject) => {
-                    return (
-                        <Subject
-                            key={subject.id}
-                            SubjectID={subject.id}
-                            SubjectName={subject.title}
-                            Description={subject.description}
-                            Tutors={subject.tutors}
-                        />
-                    );
+                    if (subject.tutors && subject.tutors.length !== 0) {
+                        return (
+                            <Subject
+                                key={subject.id}
+                                SubjectID={subject.id}
+                                SubjectName={subject.title}
+                                Description={subject.description}
+                                Tutors={subject.tutors}
+                            />
+                        );
+                    }
                 })
             ) : (
                 <Typography

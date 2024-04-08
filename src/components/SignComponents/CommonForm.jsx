@@ -161,33 +161,29 @@ const CommonForm = ({
                     <Box></Box>
                 )}
 
-                {Page === "signin" ? (
-                    <FormControl sx={{ textAlign: "left", mt: "20px" }}>
-                        <FormLabel id="demo-row-radio-buttons-group-label">
-                            Organization
-                        </FormLabel>
-                        <RadioGroup
-                            row
-                            aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
-                            onChange={handleOrganizationChange}
-                        >
-                            {Organizations &&
-                                Organizations.map((oranization, index) => {
-                                    return (
-                                        <FormControlLabel
-                                            key={index}
-                                            value={oranization.name}
-                                            control={<Radio />}
-                                            label={oranization.name}
-                                        />
-                                    );
-                                })}
-                        </RadioGroup>
-                    </FormControl>
-                ) : (
-                    <Box></Box>
-                )}
+                <FormControl sx={{ textAlign: "left", mt: "20px" }}>
+                    <FormLabel id="demo-row-radio-buttons-group-label">
+                        Organization
+                    </FormLabel>
+                    <RadioGroup
+                        row
+                        aria-labelledby="demo-row-radio-buttons-group-label"
+                        name="row-radio-buttons-group"
+                        onChange={handleOrganizationChange}
+                    >
+                        {Organizations &&
+                            Organizations.map((oranization, index) => {
+                                return (
+                                    <FormControlLabel
+                                        key={index}
+                                        value={oranization.name}
+                                        control={<Radio />}
+                                        label={oranization.name}
+                                    />
+                                );
+                            })}
+                    </RadioGroup>
+                </FormControl>
 
                 {!isLoading ? (
                     <Button

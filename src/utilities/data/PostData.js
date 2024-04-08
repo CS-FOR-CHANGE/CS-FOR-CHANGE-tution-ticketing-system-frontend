@@ -24,7 +24,6 @@ const postData = async function postData(url, dataToSend) {
     } catch (error) {
         // If an error occurred during the fetch or during response processing,
         // return an object indicating an error with the error message.
-        console.error("Could not post the data: ", error);
         return { success: false, error: error.message };
     }
 };

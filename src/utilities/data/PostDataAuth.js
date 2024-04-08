@@ -13,14 +13,14 @@ function sanitizeData(data) {
     return sanitizedData;
 }
 
-const postDataAuth = async function postData(url, dataToSend) {
+const postDataAuth = async function postData(url, dataToSend, Method="POST") {
     try {
         // Assuming retrieveTokens() returns a promise that resolves to the token
         const token = await retrieveTokens();
         const sanitizedData = sanitizeData(dataToSend);
 
         const response = await fetch(BackendLink + url, {
-            method: "POST",
+            method: Method,
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token.accessToken}`, // Adjust according to how retrieveTokens() provides the token
@@ -40,7 +40,6 @@ const postDataAuth = async function postData(url, dataToSend) {
         // If the response is ok, return the data
         return { success: true, data: data };
     } catch (error) {
-        console.error("Could not post the data: ", error);
         return { success: false, error: error.message };
     }
 };

@@ -19,16 +19,22 @@ import { retrieveTokens } from "./tokens/getToken";
 import { deleteToken } from "./tokens/deleteToken";
 import { Link } from "react-router-dom";
 import ProfileModal from "../components/Header/ProfileModal";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import fetchData from "./data/Fetchdata";
 
 const pages = [
+    { name: "Home", link: "/" },
     { name: "Student", link: "/student" },
     { name: "Tutor", link: "/tutor" },
-    { name: "Edmonds College", link: "https://www.edmonds.edu/" },
 ];
 
 function ResponsiveAppBar() {
     const User = useSelector((state) => state.User.user);
+    const [UserRole, setUserRole] = React.useState("");
+    const [Organization, setOrganization] = React.useState({});
     const [OpenProfileModal, setOpenProfileModal] = React.useState(false);
+    const [IsTutorActive, setIsTutorActive] = React.useState(false);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -69,6 +75,55 @@ function ResponsiveAppBar() {
 
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
+    };
+
+    React.useEffect(() => {
+        // Define the async function inside the effect
+        async function fetchTokens() {
+            const token = await retrieveTokens();
+            setUserRole(token.user_role);
+
+            //Check if the tutor is in the active tutors list
+            fetchData("/api/ticketing/organizations/").then((organizations) => {
+                organizations.map((organization) => {
+                    const organization_name = organization.name;
+
+                    if (organization_name === token.organization) {
+                        setOrganization(organization);
+                        const active_tutors = organization.active_tutors;
+
+                        active_tutors.map((tutor) => {
+                            if (tutor.id === User.id) {
+                                setIsTutorActive(true);
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        // Call the async function
+        fetchTokens();
+    }, [User]);
+
+    // Function to handle the switch's state change
+    const handleSwitchChange = (event) => {
+        setIsTutorActive(event.target.checked); // Update the state based on switch position
+        if (event.target.checked) {
+            // The switch is turned on
+            postDataAuth(
+                `/api/ticketing/organization/${Organization.id}/tutor/${User.id}/status/`,
+                { is_active: true },
+                "PATCH"
+            ).then((data) => {});
+        } else {
+            // The switch is turned off
+            postDataAuth(
+                `/api/ticketing/organization/${Organization.id}/tutor/${User.id}/status/`,
+                { is_active: false },
+                "PATCH"
+            ).then((data) => {});
+        }
     };
 
     return (
@@ -259,7 +314,25 @@ function ResponsiveAppBar() {
                                 ) : (
                                     <Box></Box>
                                 )}
+
+                                {UserRole === "tutor" ? (
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={IsTutorActive}
+                                                onChange={handleSwitchChange}
+                                                defaultChecked={false}
+                                            />
+                                        }
+                                        label="Active"
+                                        sx={{ marginBottom: "10px" }}
+                                    />
+                                ) : (
+                                    <Box></Box>
+                                )}
+
                                 <Box sx={{ borderBottom: 1, mb: "10px" }}></Box>
+
                                 {settings.map((setting) => (
                                     <MenuItem
                                         key={setting.name}
