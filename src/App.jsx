@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import {
     fetchAppendTicketsSuccess,
     deleteTicketSuccess,
+    updateTicketSuccess,
 } from "./redux/ticket/ticketsActions";
 import fetchDataAuth from "./utilities/data/FetchdataAuth";
 import { retrieveTokens } from "./utilities/tokens/getToken";
@@ -56,6 +57,11 @@ function App() {
                 fetchSubjects();
             } else if (action === "deleted") {
                 dispatch(deleteTicketSuccess(ticket_json.id));
+
+                // Get the subjects and the tutors associates with the subject
+                fetchSubjects();
+            } else if (action === "update") {
+                dispatch(updateTicketSuccess(ticket_json));
 
                 // Get the subjects and the tutors associates with the subject
                 fetchSubjects();

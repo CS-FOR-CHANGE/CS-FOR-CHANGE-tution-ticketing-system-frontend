@@ -6,6 +6,7 @@ import {
     FETCH_APPEND_TICKETS_SUCCESS,
     SET_TICKETS,
     DELETE_TICKET_SUCCESS,
+    UPDATE_TICKET_SUCCESS 
 } from "./ticketsTypes";
 
 export const fetchTicketsRequest = () => ({
@@ -38,3 +39,11 @@ export const deleteTicketSuccess = (ticketId) => {
         payload: ticketId,
     };
 };
+
+export const updateTicketSuccess = ticket => {
+    return {
+        type: UPDATE_TICKET_SUCCESS,
+        payload: ticket,
+    };
+};
+

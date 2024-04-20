@@ -6,6 +6,7 @@ import {
     FETCH_APPEND_TICKETS_SUCCESS,
     SET_TICKETS,
     DELETE_TICKET_SUCCESS,
+    UPDATE_TICKET_SUCCESS,
 } from "./ticketsTypes";
 
 const initialState = {
@@ -49,6 +50,13 @@ const ticketsReducer = (state = initialState, action) => {
                 ...state,
                 tickets: state.tickets.filter(
                     (ticket) => ticket.id !== action.payload
+                ),
+            };
+        case UPDATE_TICKET_SUCCESS:
+            return {
+                ...state,
+                tickets: state.tickets.map((ticket) =>
+                    ticket.id === action.payload.id ? action.payload : ticket
                 ),
             };
         default:

@@ -15,6 +15,8 @@ import { useSelector } from "react-redux";
 import fetchDataAuth from "../../../utilities/data/FetchdataAuth";
 import CountdownTimer from "./CountdownTimer";
 import UserTurnCountdown from "./UserTurnCountdown";
+import Tooltip from "@mui/material/Tooltip";
+import Alert from "@mui/material/Alert";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -40,6 +42,14 @@ const leaveQueue = (ticketID) => {
     fetchDataAuth(`/api/ticketing/tickets/${ticketID}/delete/`, "DELETE").then(
         (data) => {}
     );
+};
+
+const statusMessages = {
+    ready: "Tutor is ready for the student",
+    waiting: "Waiting for the tutor",
+    helping: "Tutor is currently helping the student",
+    completed: "Session has been completed", // Example of another possible status
+    // Add other statuses as necessary
 };
 
 export default function QueueStudents({ Status, Tickets }) {
@@ -88,37 +98,73 @@ export default function QueueStudents({ Status, Tickets }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filteredTickets.map((ticket) => (
-                            <StyledTableRow key={ticket.id}>
-                                <StyledTableCell component="th" scope="row">
-                                    {ticket.student.name}
-                                </StyledTableCell>
-                                <StyledTableCell align="left">
-                                    {ticket.tutor.name} ({ticket.subject.title})
-                                </StyledTableCell>
-                                {/* <StyledTableCell align="left">
+                        {filteredTickets.map((ticket, index) => {
+                            return (
+                                <StyledTableRow key={ticket.id}>
+                                    <StyledTableCell component="th" scope="row">
+                                        {ticket.student.name}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left">
+                                        {ticket.tutor.name} (
+                                        {ticket.subject.title})
+                                    </StyledTableCell>
+                                    {/* <StyledTableCell align="left">
                                     <CountdownTimer
                                         startTime={ticket.start_time}
                                         endTime={ticket.end_time}
                                     />
                                 </StyledTableCell> */}
-                                {User && User.id === ticket.student.id ? (
-                                    <StyledTableCell align="left">
-                                        <IconButton
-                                            color="secondary"
-                                            aria-label="remove from queue"
-                                            onClick={() => {
-                                                leaveQueue(ticket.id);
-                                            }}
-                                        >
-                                            <PersonRemoveAlt1Icon />
-                                        </IconButton>
+                                    <StyledTableCell
+                                        align="left"
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "10px",
+                                        }}
+                                    >
+                                        {index === 0 ? (
+                                            <Alert
+                                                severity="error"
+                                                color={
+                                                    ticket.status === "waiting"
+                                                        ? "warning"
+                                                        : ticket.status ===
+                                                          "ready"
+                                                        ? "info"
+                                                        : ticket.status ===
+                                                          "helping"
+                                                        ? "success"
+                                                        : "warning"
+                                                }
+                                            >
+                                                {statusMessages[
+                                                    ticket.status
+                                                ] || "Status unknown"}
+                                            </Alert>
+                                        ) : (
+                                            <Box></Box>
+                                        )}
+
+                                        {User &&
+                                        User.id === ticket.student.id ? (
+                                            <Tooltip title="Leave from queue">
+                                                <IconButton
+                                                    color="secondary"
+                                                    aria-label="remove from queue"
+                                                    onClick={() => {
+                                                        leaveQueue(ticket.id);
+                                                    }}
+                                                >
+                                                    <PersonRemoveAlt1Icon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        ) : (
+                                            <Box></Box>
+                                        )}
                                     </StyledTableCell>
-                                ) : (
-                                    <StyledTableCell></StyledTableCell>
-                                )}
-                            </StyledTableRow>
-                        ))}
+                                </StyledTableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>
